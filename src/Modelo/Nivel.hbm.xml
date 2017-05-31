@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/05/2017 06:16:03 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Modelo.Nivel" table="nivel" catalog="colegio" optimistic-lock="version">
+        <id name="idNivel" type="string">
+            <column name="IdNivel" length="3" />
+            <generator class="assigned" />
+        </id>
+        <property name="nivel" type="string">
+            <column name="nivel" length="10" not-null="true" />
+        </property>
+        <property name="grado" type="char">
+            <column name="grado" length="1" not-null="true" />
+        </property>
+        <set name="matriculas" table="matricula" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdNivel" length="3" not-null="true" />
+            </key>
+            <one-to-many class="Modelo.Matricula" />
+        </set>
+    </class>
+</hibernate-mapping>

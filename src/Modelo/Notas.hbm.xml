@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/05/2017 06:16:03 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Modelo.Notas" table="notas" catalog="colegio" optimistic-lock="version">
+        <id name="idNotas" type="java.lang.Integer">
+            <column name="IdNotas" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cursos" class="Modelo.Cursos" fetch="select">
+            <column name="CodCurso" not-null="true" />
+        </many-to-one>
+        <many-to-one name="matricula" class="Modelo.Matricula" fetch="select">
+            <column name="CodMatricula" not-null="true" />
+        </many-to-one>
+        <property name="n1" type="double">
+            <column name="N1" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="n2" type="double">
+            <column name="N2" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="n3" type="double">
+            <column name="N3" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="n4" type="double">
+            <column name="N4" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="n5" type="double">
+            <column name="N5" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="n6" type="double">
+            <column name="N6" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="situacion" type="string">
+            <column name="Situacion" length="10" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

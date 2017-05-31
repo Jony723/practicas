@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/05/2017 06:16:03 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Modelo.Matricula" table="matricula" catalog="colegio" optimistic-lock="version">
+        <id name="codMatricula" type="java.lang.Integer">
+            <column name="CodMatricula" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="alumnos" class="Modelo.Alumnos" fetch="select">
+            <column name="CodAlumno" length="8" not-null="true" />
+        </many-to-one>
+        <many-to-one name="nivel" class="Modelo.Nivel" fetch="select">
+            <column name="IdNivel" length="3" not-null="true" />
+        </many-to-one>
+        <property name="fechaMatricula" type="date">
+            <column name="FechaMAtricula" length="10" not-null="true" />
+        </property>
+        <set name="notases" table="notas" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodMatricula" not-null="true" />
+            </key>
+            <one-to-many class="Modelo.Notas" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/05/2017 06:16:03 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Modelo.Cursos" table="cursos" catalog="colegio" optimistic-lock="version">
+        <id name="codCurso" type="java.lang.Integer">
+            <column name="CodCurso" />
+            <generator class="identity" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="Descripcion" length="15" not-null="true" />
+        </property>
+        <property name="area" type="string">
+            <column name="Area" length="15" not-null="true" />
+        </property>
+        <property name="condicion" type="string">
+            <column name="Condicion" length="10" not-null="true" />
+        </property>
+        <set name="notases" table="notas" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodCurso" not-null="true" />
+            </key>
+            <one-to-many class="Modelo.Notas" />
+        </set>
+    </class>
+</hibernate-mapping>

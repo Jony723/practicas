@@ -1,5 +1,5 @@
 package Modelo;
-// Generated 26/05/2017 06:16:01 PM by Hibernate Tools 4.3.1
+// Generated 16/06/2017 06:14:45 PM by Hibernate Tools 4.3.1
 
 
 
@@ -12,18 +12,19 @@ public class Notas  implements java.io.Serializable {
      private Integer idNotas;
      private Cursos cursos;
      private Matricula matricula;
-     private double n1;
-     private double n2;
-     private double n3;
-     private double n4;
-     private double n5;
-     private double n6;
+     private int n1;
+     private int n2;
+     private int n3;
+     private int n4;
+     private int n5;
+     private int n6;
+     private double promedio;
      private String situacion;
 
     public Notas() {
     }
 
-    public Notas(Cursos cursos, Matricula matricula, double n1, double n2, double n3, double n4, double n5, double n6, String situacion) {
+    public Notas(Cursos cursos, Matricula matricula, int n1, int n2, int n3, int n4, int n5, int n6, double promedio, String situacion) {
        this.cursos = cursos;
        this.matricula = matricula;
        this.n1 = n1;
@@ -32,6 +33,7 @@ public class Notas  implements java.io.Serializable {
        this.n4 = n4;
        this.n5 = n5;
        this.n6 = n6;
+       this.promedio = promedio;
        this.situacion = situacion;
     }
    
@@ -56,47 +58,54 @@ public class Notas  implements java.io.Serializable {
     public void setMatricula(Matricula matricula) {
         this.matricula = matricula;
     }
-    public double getN1() {
+    public int getN1() {
         return this.n1;
     }
     
-    public void setN1(double n1) {
+    public void setN1(int n1) {
         this.n1 = n1;
     }
-    public double getN2() {
+    public int getN2() {
         return this.n2;
     }
     
-    public void setN2(double n2) {
+    public void setN2(int n2) {
         this.n2 = n2;
     }
-    public double getN3() {
+    public int getN3() {
         return this.n3;
     }
     
-    public void setN3(double n3) {
+    public void setN3(int n3) {
         this.n3 = n3;
     }
-    public double getN4() {
+    public int getN4() {
         return this.n4;
     }
     
-    public void setN4(double n4) {
+    public void setN4(int n4) {
         this.n4 = n4;
     }
-    public double getN5() {
+    public int getN5() {
         return this.n5;
     }
     
-    public void setN5(double n5) {
+    public void setN5(int n5) {
         this.n5 = n5;
     }
-    public double getN6() {
+    public int getN6() {
         return this.n6;
     }
     
-    public void setN6(double n6) {
+    public void setN6(int n6) {
         this.n6 = n6;
+    }
+    public double getPromedio() {
+        return this.promedio;
+    }
+    
+    public void setPromedio(double promedio) {
+        this.promedio = promedio;
     }
     public String getSituacion() {
         return this.situacion;

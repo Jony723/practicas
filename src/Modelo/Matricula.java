@@ -1,5 +1,5 @@
 package Modelo;
-// Generated 26/05/2017 06:16:01 PM by Hibernate Tools 4.3.1
+// Generated 16/06/2017 06:14:45 PM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;
@@ -13,7 +13,7 @@ public class Matricula  implements java.io.Serializable {
 
 
      private Integer codMatricula;
-     private Alumnos alumnos;
+     private Alumno alumno;
      private Nivel nivel;
      private Date fechaMatricula;
      private Set notases = new HashSet(0);
@@ -22,13 +22,13 @@ public class Matricula  implements java.io.Serializable {
     }
 
 	
-    public Matricula(Alumnos alumnos, Nivel nivel, Date fechaMatricula) {
-        this.alumnos = alumnos;
+    public Matricula(Alumno alumno, Nivel nivel, Date fechaMatricula) {
+        this.alumno = alumno;
         this.nivel = nivel;
         this.fechaMatricula = fechaMatricula;
     }
-    public Matricula(Alumnos alumnos, Nivel nivel, Date fechaMatricula, Set notases) {
-       this.alumnos = alumnos;
+    public Matricula(Alumno alumno, Nivel nivel, Date fechaMatricula, Set notases) {
+       this.alumno = alumno;
        this.nivel = nivel;
        this.fechaMatricula = fechaMatricula;
        this.notases = notases;
@@ -41,12 +41,12 @@ public class Matricula  implements java.io.Serializable {
     public void setCodMatricula(Integer codMatricula) {
         this.codMatricula = codMatricula;
     }
-    public Alumnos getAlumnos() {
-        return this.alumnos;
+    public Alumno getAlumno() {
+        return this.alumno;
     }
     
-    public void setAlumnos(Alumnos alumnos) {
-        this.alumnos = alumnos;
+    public void setAlumno(Alumno alumno) {
+        this.alumno = alumno;
     }
     public Nivel getNivel() {
         return this.nivel;

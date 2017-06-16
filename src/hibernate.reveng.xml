@@ -43,7 +43,7 @@ Contributor(s):
   <schema-selection match-catalog="colegio"/>
   <table-filter match-name="notas"/>
   <table-filter match-name="matricula"/>
-  <table-filter match-name="alumnos"/>
+  <table-filter match-name="alumno"/>
   <table-filter match-name="nivel"/>
   <table-filter match-name="cursos"/>
 </hibernate-reverse-engineering>

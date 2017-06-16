@@ -46,10 +46,10 @@ Contributor(s):
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/colegio?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">root</property>
     <property name="hibernate.connection.password">123456</property>
-    <mapping resource="Modelo/Matricula.hbm.xml"/>
-    <mapping resource="Modelo/Alumnos.hbm.xml"/>
-    <mapping resource="Modelo/Cursos.hbm.xml"/>
     <mapping resource="Modelo/Nivel.hbm.xml"/>
+    <mapping resource="Modelo/Matricula.hbm.xml"/>
+    <mapping resource="Modelo/Alumno.hbm.xml"/>
+    <mapping resource="Modelo/Cursos.hbm.xml"/>
     <mapping resource="Modelo/Notas.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>

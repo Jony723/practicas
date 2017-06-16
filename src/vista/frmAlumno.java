@@ -8,18 +8,22 @@ package vista;
 import controlador.tools.*;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
+import controlador.c_Alumno;
+import Modelo.Alumno;
 /**
  *
  * @author Jony
  */
 public class frmAlumno extends javax.swing.JFrame {
 
+    public Utilitarios util;
+    public c_Alumno control;
     /**
      * Creates new form frmAlumno
      */
     public frmAlumno() {
         initComponents();
-        Utilitarios util=new Utilitarios();
+        util=new Utilitarios();
         util.validar("n", txtCodigo);
         util.validar("L", txtNombre);
         util.validar("L", txtAPaterno);
@@ -51,7 +55,7 @@ public class frmAlumno extends javax.swing.JFrame {
         txtAPaterno = new javax.swing.JTextField();
         txtAMaterno = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        dchFechaNac = new com.toedter.calendar.JDateChooser();
         jPanel2 = new javax.swing.JPanel();
         rbtActivo = new javax.swing.JRadioButton();
         rbtRetirado = new javax.swing.JRadioButton();
@@ -73,6 +77,11 @@ public class frmAlumno extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GESTIÓN COLEGIO - ALUMNO");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -161,6 +170,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnRegistrar.setMnemonic('R');
         btnRegistrar.setText("Registrar");
         btnRegistrar.setToolTipText("Registrar alumno");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -189,7 +203,7 @@ public class frmAlumno extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dchFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
@@ -220,7 +234,7 @@ public class frmAlumno extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(dchFechaNac, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(52, 52, 52))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -384,6 +398,42 @@ public class frmAlumno extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtBuscarKeyTyped
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+       util.Salir();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+       if(verificar()){
+           Alumno alm=new Alumno();
+           alm.setCodAlumno(txtCodigo.getText());
+           alm.setNombres(txtNombre.getText());
+           alm.setApaterno(txtAPaterno.getText());
+           alm.setAmaterno(txtAMaterno.getText());
+           alm.setFechaNac(dchFechaNac.getDate());
+           alm.setEstado(getEstado());
+           control=new c_Alumno();
+           control.Registrar_alumno(alm);
+       }
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+public boolean verificar(){
+    boolean v=false;
+    if(txtCodigo.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null,"Ingrese DNI de alumno a registrar");
+        txtCodigo.requestFocus();
+    }else if(txtNombre.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null,"Ingrese los nombres del alumno a registrar");
+        txtCodigo.requestFocus();
+    }else if(txtAPaterno.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null,"Ingrese apellido paterno del alumno");
+        txtAPaterno.requestFocus();
+    }else if(txtAMaterno.getText().isEmpty()){
+        JOptionPane.showMessageDialog(null,"Ingrese apellido materno del alumno");
+    }else{
+        v=true;
+    }
+    
+    return v;
+}
     
     public String getEstado(){
         String e="Activo";
@@ -435,7 +485,7 @@ public class frmAlumno extends javax.swing.JFrame {
     private javax.swing.JButton btnOk;
     private javax.swing.JButton btnRegistrar;
     private javax.swing.JComboBox<String> cboBuscar;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private com.toedter.calendar.JDateChooser dchFechaNac;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

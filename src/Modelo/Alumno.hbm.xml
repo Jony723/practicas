@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 26/05/2017 06:16:03 PM by Hibernate Tools 4.3.1 -->
+<!-- Generated 16/06/2017 06:14:46 PM by Hibernate Tools 4.3.1 -->
 <hibernate-mapping>
-    <class name="Modelo.Alumnos" table="alumnos" catalog="colegio" optimistic-lock="version">
+    <class name="Modelo.Alumno" table="alumno" catalog="colegio" optimistic-lock="version">
         <id name="codAlumno" type="string">
             <column name="CodAlumno" length="8" />
             <generator class="assigned" />

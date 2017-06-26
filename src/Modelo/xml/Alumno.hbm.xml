@@ -23,11 +23,12 @@
         <property name="fechaNac" type="date">
             <column name="FechaNac" length="10" not-null="true" />
         </property>
-        <set name="matriculas" table="matricula" inverse="true" lazy="true" fetch="select">
+        <set name="matriculas" table="matricula" inverse="false" lazy="true" fetch="select">
             <key>
                 <column name="CodAlumno" length="8" not-null="true" />
             </key>
             <one-to-many class="Modelo.Matricula" />
         </set>
+                
     </class>
 </hibernate-mapping>

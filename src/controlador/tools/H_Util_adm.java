@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controlador;
+package controlador.tools;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.SessionFactory;
 
@@ -33,5 +34,11 @@ public class H_Util_adm {
     
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+    
+    public static void closeSessionFactory() {
+         if ((sessionFactory!=null) && (sessionFactory.isClosed()==false)) {
+             sessionFactory.close();
+         }  
     }
 }

@@ -121,22 +121,18 @@ public class FrmInicio extends javax.swing.JFrame implements ActionListener{
         switch(x){
             case 1:
                frmAlm.setVisible(true);
-               frmAlm.setLocationRelativeTo(null);
                this.dispose();
                break;
             case 2:
                 frmMatr.setVisible(true);
-                frmMatr.setLocationRelativeTo(null);
                 this.dispose();
                 break;
             case 3:
                 frmCur.setVisible(true);
-                frmCur.setLocationRelativeTo(null);
                 this.dispose();
                 break;
             case 4:
                 frmN.setVisible(true);
-                frmN.setLocationRelativeTo(null);
                 this.dispose();
                 break;
         }

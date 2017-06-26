@@ -16,6 +16,7 @@ public class FrmMatricula extends javax.swing.JFrame {
      */
     public FrmMatricula() {
         initComponents();
+      this.setLocationRelativeTo(null);
     }
 
     /**

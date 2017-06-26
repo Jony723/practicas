@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import controlador.c_Alumno;
 import Modelo.Alumno;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Jony
@@ -18,11 +19,13 @@ public class frmAlumno extends javax.swing.JFrame {
 
     public Utilitarios util;
     public c_Alumno control;
+    public Alumno alm;
     /**
      * Creates new form frmAlumno
      */
     public frmAlumno() {
         initComponents();
+        this.setLocationRelativeTo(null);
         util=new Utilitarios();
         util.validar("n", txtCodigo);
         util.validar("L", txtNombre);
@@ -182,12 +185,23 @@ public class frmAlumno extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)
+                        .addComponent(txtCodigo))
+                    .addComponent(jLabel6))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dchFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(133, 133, 133))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtNombre)
@@ -199,16 +213,7 @@ public class frmAlumno extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtAMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(dchFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
-                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(133, 133, 133))))
+                        .addGap(25, 25, 25))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,6 +274,11 @@ public class frmAlumno extends javax.swing.JFrame {
         jPanel3.setOpaque(false);
 
         cboBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione", "Por Numero DNI", "Por Apellido Paterno" }));
+        cboBuscar.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboBuscarItemStateChanged(evt);
+            }
+        });
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -283,6 +293,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnBuscar.setMnemonic('B');
         btnBuscar.setText("Buscar");
         btnBuscar.setToolTipText("busca los alumnos de acuerdo a los criterios establecidos");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -404,7 +419,7 @@ public class frmAlumno extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
        if(verificar()){
-           Alumno alm=new Alumno();
+           alm=new Alumno();
            alm.setCodAlumno(txtCodigo.getText());
            alm.setNombres(txtNombre.getText());
            alm.setApaterno(txtAPaterno.getText());
@@ -413,8 +428,33 @@ public class frmAlumno extends javax.swing.JFrame {
            alm.setEstado(getEstado());
            control=new c_Alumno();
            control.Registrar_alumno(alm);
+           Limpiar(1);
        }
     }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+    Limpiar(2);
+        control=new c_Alumno();
+        DefaultTableModel modelo=null;
+        switch(cboBuscar.getSelectedIndex()){
+            case 1:
+                modelo=control.busquedaAlumno(1, this.txtBuscar.getText());
+                break;
+            case 2:
+                modelo=control.busquedaAlumno(2,this.txtBuscar.getText());
+                break;
+        }
+        this.tblDetalles.setModel(modelo);
+        this.txtBuscar.selectAll();
+        this.txtBuscar.requestFocus();
+        if(tblDetalles.getRowCount()>0){
+            btnModificar.setEnabled(true);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void cboBuscarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboBuscarItemStateChanged
+       this.txtBuscar.setText(null);
+    }//GEN-LAST:event_cboBuscarItemStateChanged
 public boolean verificar(){
     boolean v=false;
     if(txtCodigo.getText().isEmpty()){
@@ -440,6 +480,20 @@ public boolean verificar(){
         if(this.rbtCulminado.isSelected()) e="Culminado";
         if(this.rbtRetirado.isSelected())e="Retirado";
         return e;
+    }
+    
+    public void Limpiar(int x){
+        switch(x){
+            case 1:
+                util.LimpiarTxt(jPanel1);
+                rbtActivo.setSelected(true);
+            break;
+            case 2:
+                tblDetalles.removeAll();
+                btnModificar.setEnabled(false);
+                        
+        }
+        
     }
     
     /**

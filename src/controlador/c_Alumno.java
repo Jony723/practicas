@@ -79,8 +79,9 @@ public DefaultTableModel busquedaAlumno(int n,String par){
 
 public void Actualizar(Alumno a){
   Session s=sf.openSession();
+  s.beginTransaction();
   s.update(a);
-  s.beginTransaction().commit();
+  s.getTransaction().commit();
   JOptionPane.showMessageDialog(null,"Se nodificaron los datos , exitosamente");
   s.clear();
   s.close();
@@ -90,13 +91,14 @@ public void Eliminar(Alumno a){
     
     System.out.println("codigo a eliminar: "+a.getCodAlumno());
     Session s=sf.openSession();
-    Transaction tx=s.beginTransaction();
+    s.beginTransaction();
     s.delete(a);
-    tx.commit();
+    s.beginTransaction().commit();
     JOptionPane.showMessageDialog(null,"Se elimino Alumno satisfactoriamente");
     System.out.println("codigo"+a.getCodAlumno());
 }
 public void cerrarAlumno(){
+   if(sf!=null)
     H_Util_adm.closeSessionFactory();// se cierra el administrador de sesiones
 }
 

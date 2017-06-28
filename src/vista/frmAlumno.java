@@ -399,6 +399,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnInicio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exit.png"))); // NOI18N
         btnInicio.setText("INICIO");
         btnInicio.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 690, 130, 50));
 
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/degradados-wallpapers-3.jpg"))); // NOI18N
@@ -560,6 +565,16 @@ public class frmAlumno extends javax.swing.JFrame {
            btnOk.setEnabled(false);
        }
     }//GEN-LAST:event_btnOkActionPerformed
+
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
+        int eleccion=JOptionPane.showConfirmDialog(null, "¿Desea regresaral inicio", "INICIO", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+             if(eleccion==JOptionPane.YES_OPTION){
+                FrmInicio i=new FrmInicio();
+                i.setVisible(true);
+                control.cerrarAlumno();
+                this.dispose();
+             }
+    }//GEN-LAST:event_btnInicioActionPerformed
 
     public boolean verificar(){
     boolean v=false;

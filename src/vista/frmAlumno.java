@@ -6,10 +6,10 @@
 package vista;
 
 import controlador.tools.*;
-import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import controlador.c_Alumno;
 import Modelo.Alumno;
+import java.sql.Date;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -35,6 +35,7 @@ public class frmAlumno extends javax.swing.JFrame {
         this.txtNombre.setDocument(new Limitador(txtNombre, 30));
         this.txtAPaterno.setDocument(new Limitador(txtAPaterno, 15));
         this.txtAMaterno.setDocument(new Limitador(txtAMaterno, 15));
+      
     }
 
     /**
@@ -282,6 +283,9 @@ public class frmAlumno extends javax.swing.JFrame {
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtBuscarKeyTyped(evt);
             }
@@ -335,6 +339,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnOk.setText("Ok");
         btnOk.setToolTipText("Grabar los cambios en el alumno seleccionado");
         btnOk.setEnabled(false);
+        btnOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOkActionPerformed(evt);
+            }
+        });
 
         btnModificar.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         btnModificar.setForeground(new java.awt.Color(0, 102, 153));
@@ -342,6 +351,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnModificar.setMnemonic('M');
         btnModificar.setText("Modificar");
         btnModificar.setEnabled(false);
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnEliminar.setForeground(new java.awt.Color(0, 102, 153));
@@ -349,6 +363,11 @@ public class frmAlumno extends javax.swing.JFrame {
         btnEliminar.setMnemonic('E');
         btnEliminar.setText("Eliminar");
         btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -390,6 +409,10 @@ public class frmAlumno extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+       
+    
+    
     private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
           Character c=evt.getKeyChar();
         switch(this.cboBuscar.getSelectedIndex()){
@@ -402,19 +425,24 @@ public class frmAlumno extends javax.swing.JFrame {
               if(Character.isLetter(c)){
                 evt.consume();
                 getToolkit().beep();
-              }
+                }
+                          
               break;
           case 2:
               if(Character.isDigit(c)){
                 evt.consume();
                 getToolkit().beep();
-              } 
+                } 
+               
               break;
         }
+       
+        
     }//GEN-LAST:event_txtBuscarKeyTyped
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-       util.Salir();
+       control.cerrarAlumno();
+        util.Salir();
     }//GEN-LAST:event_formWindowClosing
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
@@ -439,6 +467,7 @@ public class frmAlumno extends javax.swing.JFrame {
         switch(cboBuscar.getSelectedIndex()){
             case 1:
                 modelo=control.busquedaAlumno(1, this.txtBuscar.getText());
+                
                 break;
             case 2:
                 modelo=control.busquedaAlumno(2,this.txtBuscar.getText());
@@ -449,13 +478,90 @@ public class frmAlumno extends javax.swing.JFrame {
         this.txtBuscar.requestFocus();
         if(tblDetalles.getRowCount()>0){
             btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void cboBuscarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboBuscarItemStateChanged
        this.txtBuscar.setText(null);
     }//GEN-LAST:event_cboBuscarItemStateChanged
-public boolean verificar(){
+
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+        switch(cboBuscar.getSelectedIndex()){
+            case 1:
+      
+         if(txtBuscar.getText().length()>8){
+            String texto = this.txtBuscar.getText(); // Capturamos texto digitado
+            texto = texto.substring(0, texto.length() - 1); // Descartar la ultima tecla ingresada
+            this.txtBuscar.setText(texto);
+            // Mensaje de error
+        } 
+         break;
+            case 2:
+                if(txtBuscar.getText().length()>15){
+            String texto = this.txtBuscar.getText(); // Capturamos texto digitado
+            texto = texto.substring(0, texto.length() - 1); // Descartar la ultima tecla ingresada
+            this.txtBuscar.setText(texto);
+            // Mensaje de error
+        } break;
+        }
+    }//GEN-LAST:event_txtBuscarKeyReleased
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        if(tblDetalles.getSelectedRowCount()>1){
+            JOptionPane.showMessageDialog(null,"Selecione un alumno para modificar");
+        }else{
+             int fila=tblDetalles.getSelectedRow();
+             String id=(String) tblDetalles.getValueAt(fila, 0);
+             txtCodigo.setText(id);
+             btnOk.setEnabled(true);
+             
+             btnModificar.setEnabled(false);
+             btnEliminar.setEnabled(false);
+             btnRegistrar.setEnabled(false);
+             }
+       
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+      
+        if(tblDetalles.getSelectedRowCount()!=1){
+            JOptionPane.showMessageDialog(null,"Selecione solo un alumno para Eliminar");
+        }else{
+           Alumno a=new Alumno();
+             int fila=tblDetalles.getSelectedRow();
+             a.setCodAlumno((String.valueOf(tblDetalles.getValueAt(fila, 0)))) ;
+             a.setNombres((String.valueOf(tblDetalles.getValueAt(fila, 1)))) ;
+             a.setApaterno((String.valueOf(tblDetalles.getValueAt(fila, 2)))) ;
+             a.setAmaterno((String.valueOf(tblDetalles.getValueAt(fila, 3)))) ;
+             a.setEstado((String.valueOf(tblDetalles.getValueAt(fila, 4)))) ;
+             a.setFechaNac(Date.valueOf(tblDetalles.getValueAt(fila, 5).toString()));
+             int eleccion=JOptionPane.showConfirmDialog(null, "¿Desea ELIMINAR el alumno? "+ a.getCodAlumno(), "ELIMINAR", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+             if(eleccion==JOptionPane.YES_OPTION){
+                 control.Eliminar(a);
+             }
+             }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+       if(verificar()){
+           alm=new Alumno();
+           alm.setCodAlumno(txtCodigo.getText());
+           alm.setNombres(txtNombre.getText());
+           alm.setApaterno(txtAPaterno.getText());
+           alm.setAmaterno(txtAMaterno.getText());
+           alm.setFechaNac(dchFechaNac.getDate());
+           alm.setEstado(getEstado());
+           control=new c_Alumno();
+           control.Actualizar(alm);
+           Limpiar(1);
+           Limpiar(2);
+           btnRegistrar.setEnabled(true);
+           btnOk.setEnabled(false);
+       }
+    }//GEN-LAST:event_btnOkActionPerformed
+
+    public boolean verificar(){
     boolean v=false;
     if(txtCodigo.getText().isEmpty()){
         JOptionPane.showMessageDialog(null,"Ingrese DNI de alumno a registrar");
@@ -491,7 +597,9 @@ public boolean verificar(){
             case 2:
                 tblDetalles.removeAll();
                 btnModificar.setEnabled(false);
-                        
+                btnEliminar.setEnabled(false);
+            break;
+                
         }
         
     }

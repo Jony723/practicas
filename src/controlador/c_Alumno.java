@@ -2,12 +2,9 @@
 package controlador;
 import controlador.tools.H_Util_adm;
 import Modelo.Alumno;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,10 +13,10 @@ import org.hibernate.Transaction;
 
 
 public class c_Alumno {
+    
+public SessionFactory sf=H_Util_adm.getSessionFactory();// se crea la variable q administrar todas las sesiones
 
 public void Registrar_alumno(Alumno a){
-
-    SessionFactory sf=H_Util_adm.getSessionFactory();
     Transaction tx=null;
     Session s=sf.openSession();
     /// validacion,creamos una query q nos devuelva un valor entero
@@ -32,10 +29,9 @@ public void Registrar_alumno(Alumno a){
     }else{// si existe 1 codigo igual
     JOptionPane.showMessageDialog(null,"NO se puede registrar 2 alumnos con un el mismo numero de DNI","Verifique",JOptionPane.WARNING_MESSAGE);
     }
-    s.clear();
-    s.close();
-    H_Util_adm.closeSessionFactory();
-      
+    s.clear();/// se limpia la session
+    s.close();/// se cierra la session
+   
 }
 
 public DefaultTableModel busquedaAlumno(int n,String par){
@@ -56,12 +52,16 @@ public DefaultTableModel busquedaAlumno(int n,String par){
     modelo.addColumn("Estado");
     modelo.addColumn("Fecha Nac");
     ////
-    SessionFactory sf=H_Util_adm.getSessionFactory();///se obtiene session
+   
     Session s=sf.openSession();//se abre sseion
     Query q=s.createQuery(query);//se crea la variable Query y se carga con la variable String 
     List<Object[]> listDatos = q.list();// se ejecuta la query y se obtiene una lista de objetos con los datos
+    s.clear();// se limpia la session
+    s.close();//se cierra la session
+       
     if(listDatos.isEmpty()){
         JOptionPane.showMessageDialog(null,"no se encontraron alumnos");
+        
     }else{
          for (Object[] datos : listDatos) {
         columna[0]=(datos[0] ); 
@@ -72,16 +72,33 @@ public DefaultTableModel busquedaAlumno(int n,String par){
         columna[5]=(datos[5]);
         modelo.addRow(columna);
         }
-    
     }
-   
-    s.clear();
-    s.close();
-    H_Util_adm.closeSessionFactory();
+    
     return modelo;
 }
 
+public void Actualizar(Alumno a){
+  Session s=sf.openSession();
+  s.update(a);
+  s.beginTransaction().commit();
+  JOptionPane.showMessageDialog(null,"Se nodificaron los datos , exitosamente");
+  s.clear();
+  s.close();
+}
 
+public void Eliminar(Alumno a){
+    
+    System.out.println("codigo a eliminar: "+a.getCodAlumno());
+    Session s=sf.openSession();
+    Transaction tx=s.beginTransaction();
+    s.delete(a);
+    tx.commit();
+    JOptionPane.showMessageDialog(null,"Se elimino Alumno satisfactoriamente");
+    System.out.println("codigo"+a.getCodAlumno());
+}
+public void cerrarAlumno(){
+    H_Util_adm.closeSessionFactory();// se cierra el administrador de sesiones
+}
 
 }
 

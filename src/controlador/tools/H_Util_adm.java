@@ -6,7 +6,6 @@
 package controlador.tools;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.SessionFactory;
 
@@ -32,7 +31,10 @@ public class H_Util_adm {
         }
     }
     
+     
+    
     public static SessionFactory getSessionFactory() {
+       
         return sessionFactory;
     }
     

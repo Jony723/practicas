@@ -5,6 +5,15 @@
  */
 package vista;
 
+import Modelo.Alumno;
+import Modelo.Matricula;
+import Modelo.Nivel;
+import controlador.c_Matriculas;
+import controlador.tools.Utilitarios;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jony
@@ -14,9 +23,19 @@ public class FrmMatricula extends javax.swing.JFrame {
     /**
      * Creates new form FrmMatricula
      */
+    Utilitarios util;
+    c_Matriculas control;
+    Matricula matri;
+
     public FrmMatricula() {
         initComponents();
-      this.setLocationRelativeTo(null);
+        util = new Utilitarios();
+        control = new c_Matriculas();
+        this.setLocationRelativeTo(null);
+        util.validar("n", txtCodAlm);
+        util.validar("n", txtbuscCod);
+        tblMatriculas.setModel(modeloT());
+
     }
 
     /**
@@ -38,6 +57,7 @@ public class FrmMatricula extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         dchFecha = new com.toedter.calendar.JDateChooser();
         jLabel4 = new javax.swing.JLabel();
+        lblcodMatri = new javax.swing.JLabel();
         btnRegistrar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -46,7 +66,7 @@ public class FrmMatricula extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
         rbtBusqGN = new javax.swing.JRadioButton();
         rbtBusqCodAlm = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
         txtbuscCod = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         ychBuscar = new com.toedter.calendar.JYearChooser();
@@ -60,12 +80,17 @@ public class FrmMatricula extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GESSTION COLEGIO - MATRICULAS");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("Matriculas");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 40, -1, 40));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 30, -1, 40));
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jPanel1.setOpaque(false);
@@ -75,9 +100,19 @@ public class FrmMatricula extends javax.swing.JFrame {
         jLabel2.setText("Codigo Alumno");
 
         txtCodAlm.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        txtCodAlm.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCodAlmKeyReleased(evt);
+            }
+        });
 
         btnConsultar.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
         btnConsultar.setText("Consultar");
+        btnConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarActionPerformed(evt);
+            }
+        });
 
         cboNivelG.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         cboNivelG.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione", "1° Primaria", "2° Primaria", "3° Primaria", "4° Primaria", "5° Primaria", "6° Primaria", "1° Secundaria", "2° Secundaria", "3° Secundaria", "4° Secundaria", "5° Secundaria" }));
@@ -90,11 +125,19 @@ public class FrmMatricula extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(204, 204, 204));
         jLabel4.setText("Fecha");
 
+        lblcodMatri.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblcodMatri.setForeground(new java.awt.Color(204, 204, 204));
+
         btnRegistrar.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnRegistrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save (1).png"))); // NOI18N
         btnRegistrar.setMnemonic('R');
         btnRegistrar.setText("Registrar\n");
         btnRegistrar.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -104,48 +147,46 @@ public class FrmMatricula extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCodAlm, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConsultar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cboNivelG, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(dchFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCodAlm, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnConsultar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
-                        .addComponent(btnRegistrar)
-                        .addGap(30, 30, 30))))
+                        .addComponent(dchFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRegistrar)
+                    .addComponent(lblcodMatri, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCodAlm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnConsultar)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(btnRegistrar)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(8, 8, 8)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCodAlm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConsultar)
+                    .addComponent(btnRegistrar))
+                .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cboNivelG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
                         .addComponent(jLabel4))
-                    .addComponent(dchFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(dchFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblcodMatri, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 600, 130));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 600, 130));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), "Buscar", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18), new java.awt.Color(204, 204, 204))); // NOI18N
         jPanel2.setOpaque(false);
@@ -159,18 +200,33 @@ public class FrmMatricula extends javax.swing.JFrame {
         btnOk.setText("Ok");
         btnOk.setToolTipText("Grabar los cambios en el alumno seleccionado");
         btnOk.setEnabled(false);
+        btnOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOkActionPerformed(evt);
+            }
+        });
 
         btnModificar.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         btnModificar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/arrow_circle_double.png"))); // NOI18N
         btnModificar.setMnemonic('M');
         btnModificar.setText("Modificar");
         btnModificar.setEnabled(false);
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/trash_can1.png"))); // NOI18N
         btnEliminar.setMnemonic('E');
         btnEliminar.setText("Eliminar");
         btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -202,6 +258,11 @@ public class FrmMatricula extends javax.swing.JFrame {
         rbtBusqGN.setSelected(true);
         rbtBusqGN.setText("Por Nivel y Grado");
         rbtBusqGN.setOpaque(false);
+        rbtBusqGN.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rbtBusqGNStateChanged(evt);
+            }
+        });
 
         rbtgTipobusqueda.add(rbtBusqCodAlm);
         rbtBusqCodAlm.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -209,13 +270,23 @@ public class FrmMatricula extends javax.swing.JFrame {
         rbtBusqCodAlm.setText("Por Codigo de alumno");
         rbtBusqCodAlm.setOpaque(false);
 
-        jButton1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/view.png"))); // NOI18N
-        jButton1.setMnemonic('B');
-        jButton1.setText("Buscar");
+        btnBuscar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/view.png"))); // NOI18N
+        btnBuscar.setMnemonic('B');
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
-        txtbuscCod.setText("Ingrese Codigo");
+        txtbuscCod.setToolTipText("Ingrese Codigo de alumno");
         txtbuscCod.setEnabled(false);
+        txtbuscCod.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtbuscCodKeyReleased(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(204, 204, 204));
@@ -228,24 +299,6 @@ public class FrmMatricula extends javax.swing.JFrame {
         cboBusqNivG.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         cboBusqNivG.setModel(cboNivelG.getModel());
 
-        tblMatriculas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Codigo de Matricula", "Codigo de alumno", "Nivel", "Grado", "Fecha"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         tblMatriculas.setOpaque(false);
         jScrollPane1.setViewportView(tblMatriculas);
 
@@ -268,17 +321,21 @@ public class FrmMatricula extends javax.swing.JFrame {
                                         .addContainerGap()
                                         .addComponent(jLabel6)
                                         .addGap(13, 13, 13)
-                                        .addComponent(cboBusqNivG, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(cboBusqNivG, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ychBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtbuscCod, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32)))
-                        .addComponent(jButton1))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtbuscCod, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(32, 32, 32))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(ychBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addComponent(btnBuscar))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -296,16 +353,18 @@ public class FrmMatricula extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(ychBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel5))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(28, 28, 28)
-                                .addComponent(txtbuscCod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtbuscCod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(5, 5, 5)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(ychBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cboBusqNivG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -324,6 +383,11 @@ public class FrmMatricula extends javax.swing.JFrame {
         btnInicio.setMnemonic('I');
         btnInicio.setText("INICIO");
         btnInicio.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 710, 140, 40));
 
         lblFondo.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -332,6 +396,211 @@ public class FrmMatricula extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        util.Salir();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
+        if (util.menuI()) {
+            FrmInicio i = new FrmInicio();
+            i.setVisible(true);
+            this.dispose();
+
+        }
+    }//GEN-LAST:event_btnInicioActionPerformed
+
+    private void rbtBusqGNStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbtBusqGNStateChanged
+        if (rbtBusqGN.isSelected()) {
+            cboBusqNivG.setEnabled(true);
+            ychBuscar.setEnabled(true);
+            txtbuscCod.setEnabled(false);
+        } else {
+            cboBusqNivG.setEnabled(false);
+            ychBuscar.setEnabled(false);
+            txtbuscCod.setEnabled(true);
+            txtbuscCod.requestFocus();
+            txtbuscCod.setText(null);
+        }
+    }//GEN-LAST:event_rbtBusqGNStateChanged
+
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
+        String mensaje = null;
+        if (txtCodAlm.getText().isEmpty()) {
+            mensaje = "ingrese un codigo para buscar";
+        } else if (control.busqAlumno(txtCodAlm.getText())) {
+            mensaje = "Alumno apto para matricular";
+        } else {
+            mensaje = "Alumno no registrado o no apto para matricular verifique alumno";
+            txtCodAlm.requestFocus();
+            txtCodAlm.selectAll();
+        }
+
+        JOptionPane.showMessageDialog(null, mensaje);
+    }//GEN-LAST:event_btnConsultarActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        String mensaje = null;
+        if (txtCodAlm.getText().isEmpty()) {
+            mensaje = "ingrese un codigo para registrar matricula";
+            txtCodAlm.requestFocus();
+        } else if (cboNivelG.getSelectedIndex() == 0) {
+            mensaje = "selecione un nivel y grado";
+            cboNivelG.requestFocus();
+        } else if (control.busqAlumno(txtCodAlm.getText())) {
+            mensaje = control.Registrar(getDatos(1));
+            txtCodAlm.setText(null);
+            cboNivelG.setSelectedIndex(0);
+            dchFecha.setDate(null);
+            tblMatriculas.setModel(modeloT());
+        } else {
+            mensaje = "Alumno no registrado o no apto para matricular verifique alumno";
+            txtCodAlm.requestFocus();
+            txtCodAlm.selectAll();
+        }
+        JOptionPane.showMessageDialog(null, mensaje);
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        Object[] columna = new Object[6];
+        List<Object[]> matriculas = null;
+        DefaultTableModel mt=modeloT();
+        if (rbtBusqGN.isSelected()) {
+            if (cboBusqNivG.getSelectedIndex() != 0) {
+                matriculas = (control.listaMatriculas(String.valueOf(ychBuscar.getYear()), setNivel(2), null, 1));
+            }
+        } else {
+            matriculas = (control.listaMatriculas(null, null, txtbuscCod.getText(), 2));
+        }
+        if (matriculas != null) {
+            for (Object[] matri : matriculas) {
+                columna[0] = (matri[0]);
+                columna[1] = (matri[1]);
+                columna[2] = (matri[2]);
+                columna[3] = (matri[3]);
+                columna[4] = (matri[4]);
+                
+                mt.addRow(columna);
+            }
+            tblMatriculas.setModel(mt);
+            btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (tblMatriculas.getSelectedRowCount() == 1) {
+            int fila = tblMatriculas.getSelectedRow();
+            matri = new Matricula();
+            matri.setCodMatricula(((int) tblMatriculas.getValueAt(fila, 0)));
+            control.Eliminar(matri);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "selecione una matricula para eliminar");
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        if (tblMatriculas.getSelectedRowCount() == 1) {
+            int fila = tblMatriculas.getSelectedRow();
+            lblcodMatri.setText(String.valueOf(tblMatriculas.getValueAt(fila, 0)));
+            btnOk.setEnabled(true);
+            btnRegistrar.setEnabled(false);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+            btnBuscar.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+        String mensaje = null;
+        if (txtCodAlm.getText().isEmpty()) {
+            mensaje = "Coloque un codigo de alumno para matricular";
+        } else if (cboNivelG.getSelectedIndex() == 0) {
+            mensaje = "seleccione un grado";
+        } else if (control.busqAlumno(txtCodAlm.getText()) == false) {
+            mensaje = "verifique que el codigo de alumno este registrado";
+        } else {
+            mensaje = control.Modificar(getDatos(2));
+            txtCodAlm.setText(null);
+            cboNivelG.setSelectedIndex(0);
+            dchFecha.setDate(null);
+            btnOk.setEnabled(false);
+            btnRegistrar.setEnabled(true);
+            btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
+            btnBuscar.setEnabled(true);
+        }
+        JOptionPane.showMessageDialog(null, mensaje);
+    }//GEN-LAST:event_btnOkActionPerformed
+
+    private void txtbuscCodKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtbuscCodKeyReleased
+        util.limitadorTxt(txtbuscCod, 8);
+    }//GEN-LAST:event_txtbuscCodKeyReleased
+
+    private void txtCodAlmKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodAlmKeyReleased
+        util.limitadorTxt(txtCodAlm, 8);
+    }//GEN-LAST:event_txtCodAlmKeyReleased
+
+    ////*------
+    private Nivel setNivel(int x) {
+        Nivel n = new Nivel();
+        switch (x) {
+            case 1:///para registrar y modificar
+                if (cboNivelG.getSelectedIndex() != 0) {
+                    if (cboNivelG.getSelectedIndex() < 7) {
+                        n.setIdNivel("10" + (String.valueOf(cboNivelG.getSelectedIndex())));
+                    } else {
+                        n.setIdNivel("20" + ((String.valueOf(cboNivelG.getSelectedIndex() - 6))));
+                    }
+                }
+                break;
+            case 2://para buscar
+                if (cboBusqNivG.getSelectedIndex() != 0) {
+                    if (cboBusqNivG.getSelectedIndex() < 7) {
+                        n.setIdNivel("10" + (String.valueOf(cboBusqNivG.getSelectedIndex())));
+                    } else {
+                        n.setIdNivel("20" + ((String.valueOf(cboBusqNivG.getSelectedIndex() - 6))));
+                    }
+                }
+                break;
+
+        }
+        return n;
+    }
+
+    private Matricula getDatos(int operacion) {
+        matri = new Matricula();
+        Alumno alm = new Alumno();
+        switch (operacion) {
+            case 1:///para registrar
+                alm.setCodAlumno(txtCodAlm.getText());
+                matri.setAlumno(alm);
+                matri.setNivel(setNivel(1));
+                matri.setFechaMatricula(dchFecha.getDate());
+                break;
+            case 2:///para modificar
+                matri.setCodMatricula(Integer.parseInt(lblcodMatri.getText()));
+                alm.setCodAlumno(txtCodAlm.getText());
+                matri.setAlumno(alm);
+                matri.setNivel(setNivel(1));
+                matri.setFechaMatricula(dchFecha.getDate());
+                break;
+        }
+
+        return matri;
+    }
+
+    private DefaultTableModel modeloT() {
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Codigo Matricula");
+        modelo.addColumn("Codigo de alumno");
+        modelo.addColumn("Nivel");
+        modelo.addColumn("Grado");
+        modelo.addColumn("Fecha");
+
+        return modelo;
+    }
 
     /**
      * @param args the command line arguments
@@ -369,6 +638,7 @@ public class FrmMatricula extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnConsultar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnInicio;
@@ -378,7 +648,6 @@ public class FrmMatricula extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cboBusqNivG;
     private javax.swing.JComboBox<String> cboNivelG;
     private com.toedter.calendar.JDateChooser dchFecha;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -390,6 +659,7 @@ public class FrmMatricula extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFondo;
+    private javax.swing.JLabel lblcodMatri;
     private javax.swing.JRadioButton rbtBusqCodAlm;
     private javax.swing.JRadioButton rbtBusqGN;
     private javax.swing.ButtonGroup rbtgTipobusqueda;

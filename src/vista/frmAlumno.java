@@ -11,31 +11,30 @@ import controlador.c_Alumno;
 import Modelo.Alumno;
 import java.sql.Date;
 import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jony
  */
 public class frmAlumno extends javax.swing.JFrame {
 
-    public Utilitarios util;
-    public c_Alumno control;
-    public Alumno alm;
+    Utilitarios util;
+    c_Alumno control;
+    Alumno alm;
+
     /**
      * Creates new form frmAlumno
      */
     public frmAlumno() {
         initComponents();
         this.setLocationRelativeTo(null);
-        util=new Utilitarios();
+        util = new Utilitarios();
         util.validar("n", txtCodigo);
         util.validar("L", txtNombre);
         util.validar("L", txtAPaterno);
         util.validar("L", txtAMaterno);
-        this.txtCodigo.setDocument(new Limitador(txtCodigo, 8));
-        this.txtNombre.setDocument(new Limitador(txtNombre, 30));
-        this.txtAPaterno.setDocument(new Limitador(txtAPaterno, 15));
-        this.txtAMaterno.setDocument(new Limitador(txtAMaterno, 15));
-      
+        
+
     }
 
     /**
@@ -114,12 +113,32 @@ public class frmAlumno extends javax.swing.JFrame {
 
         txtCodigo.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         txtCodigo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodigoKeyPressed(evt);
+            }
+        });
 
         txtNombre.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNombreKeyPressed(evt);
+            }
+        });
 
         txtAPaterno.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        txtAPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAPaternoKeyPressed(evt);
+            }
+        });
 
         txtAMaterno.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        txtAMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAMaternoKeyPressed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(204, 204, 204));
@@ -414,211 +433,218 @@ public class frmAlumno extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
-       
-    
-    
+
     private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
-          Character c=evt.getKeyChar();
-        switch(this.cboBuscar.getSelectedIndex()){
-          case 0:
-              evt.consume();
-              getToolkit().beep();
-              JOptionPane.showMessageDialog(null, "selecione una opción de busqueda");
-              break;
-          case 1:
-              if(Character.isLetter(c)){
+        Character c = evt.getKeyChar();
+        switch (this.cboBuscar.getSelectedIndex()) {
+            case 0:
                 evt.consume();
                 getToolkit().beep();
+                JOptionPane.showMessageDialog(null, "selecione una opción de busqueda");
+                break;
+            case 1:
+                if (Character.isLetter(c)) {
+                    evt.consume();
+                    getToolkit().beep();
                 }
-                          
-              break;
-          case 2:
-              if(Character.isDigit(c)){
-                evt.consume();
-                getToolkit().beep();
-                } 
-               
-              break;
+
+                break;
+            case 2:
+                if (Character.isDigit(c)) {
+                    evt.consume();
+                    getToolkit().beep();
+                }
+
+                break;
         }
-       
-        
+
+
     }//GEN-LAST:event_txtBuscarKeyTyped
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-       control.cerrarAlumno();
+        
         util.Salir();
     }//GEN-LAST:event_formWindowClosing
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-       if(verificar()){
-           alm=new Alumno();
-           alm.setCodAlumno(txtCodigo.getText());
-           alm.setNombres(txtNombre.getText());
-           alm.setApaterno(txtAPaterno.getText());
-           alm.setAmaterno(txtAMaterno.getText());
-           alm.setFechaNac(dchFechaNac.getDate());
-           alm.setEstado(getEstado());
-           control=new c_Alumno();
-           control.Registrar_alumno(alm);
-           Limpiar(1);
-       }
+        if (verificar()) {
+            alm = new Alumno();
+            alm.setCodAlumno(txtCodigo.getText());
+            alm.setNombres(txtNombre.getText());
+            alm.setApaterno(txtAPaterno.getText());
+            alm.setAmaterno(txtAMaterno.getText());
+            alm.setFechaNac(dchFechaNac.getDate());
+            alm.setEstado(getEstado());
+            control = new c_Alumno();
+            control.Registrar_alumno(alm);
+            Limpiar(1);
+        }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-    Limpiar(2);
-        control=new c_Alumno();
-        DefaultTableModel modelo=null;
-        switch(cboBuscar.getSelectedIndex()){
+        Limpiar(2);
+        control = new c_Alumno();
+        DefaultTableModel modelo = null;
+        switch (cboBuscar.getSelectedIndex()) {
             case 1:
-                modelo=control.busquedaAlumno(1, this.txtBuscar.getText());
-                
+                modelo = control.busquedaAlumno(1, this.txtBuscar.getText());
+
                 break;
             case 2:
-                modelo=control.busquedaAlumno(2,this.txtBuscar.getText());
+                modelo = control.busquedaAlumno(2, this.txtBuscar.getText());
                 break;
         }
         this.tblDetalles.setModel(modelo);
         this.txtBuscar.selectAll();
         this.txtBuscar.requestFocus();
-        if(tblDetalles.getRowCount()>0){
+        if (tblDetalles.getRowCount() > 0) {
             btnModificar.setEnabled(true);
             btnEliminar.setEnabled(true);
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void cboBuscarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboBuscarItemStateChanged
-       this.txtBuscar.setText(null);
+        this.txtBuscar.setText(null);
     }//GEN-LAST:event_cboBuscarItemStateChanged
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        switch(cboBuscar.getSelectedIndex()){
+        switch (cboBuscar.getSelectedIndex()) {
             case 1:
-      
-         if(txtBuscar.getText().length()>8){
-            String texto = this.txtBuscar.getText(); // Capturamos texto digitado
-            texto = texto.substring(0, texto.length() - 1); // Descartar la ultima tecla ingresada
-            this.txtBuscar.setText(texto);
-            // Mensaje de error
-        } 
-         break;
+                util.limitadorTxt(txtBuscar, 8);
+                break;
             case 2:
-                if(txtBuscar.getText().length()>15){
-            String texto = this.txtBuscar.getText(); // Capturamos texto digitado
-            texto = texto.substring(0, texto.length() - 1); // Descartar la ultima tecla ingresada
-            this.txtBuscar.setText(texto);
-            // Mensaje de error
-        } break;
+                util.limitadorTxt(txtBuscar, 15);
+                break;
         }
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        if(tblDetalles.getSelectedRowCount()>1){
-            JOptionPane.showMessageDialog(null,"Selecione un alumno para modificar");
-        }else{
-             int fila=tblDetalles.getSelectedRow();
-             String id=(String) tblDetalles.getValueAt(fila, 0);
-             txtCodigo.setText(id);
-             btnOk.setEnabled(true);
-             
-             btnModificar.setEnabled(false);
-             btnEliminar.setEnabled(false);
-             btnRegistrar.setEnabled(false);
-             }
-       
+        if (tblDetalles.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(null, "Selecione un alumno para modificar");
+        } else {
+            int fila = tblDetalles.getSelectedRow();
+            String id = (String) tblDetalles.getValueAt(fila, 0);
+            txtCodigo.setText(id);
+            btnOk.setEnabled(true);
+
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+            btnRegistrar.setEnabled(false);
+        }
+
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-      
-        if(tblDetalles.getSelectedRowCount()!=1){
-            JOptionPane.showMessageDialog(null,"Selecione solo un alumno para Eliminar");
-        }else{
-           Alumno a=new Alumno();
-             int fila=tblDetalles.getSelectedRow();
-             a.setCodAlumno((String.valueOf(tblDetalles.getValueAt(fila, 0)))) ;
-             a.setNombres((String.valueOf(tblDetalles.getValueAt(fila, 1)))) ;
-             a.setApaterno((String.valueOf(tblDetalles.getValueAt(fila, 2)))) ;
-             a.setAmaterno((String.valueOf(tblDetalles.getValueAt(fila, 3)))) ;
-             a.setEstado((String.valueOf(tblDetalles.getValueAt(fila, 4)))) ;
-             a.setFechaNac(Date.valueOf(tblDetalles.getValueAt(fila, 5).toString()));
-             int eleccion=JOptionPane.showConfirmDialog(null, "¿Desea ELIMINAR el alumno? "+ a.getCodAlumno(), "ELIMINAR", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-             if(eleccion==JOptionPane.YES_OPTION){
-                 control.Eliminar(a);
-             }
-             }
+
+        if (tblDetalles.getSelectedRowCount() != 1) {
+            JOptionPane.showMessageDialog(null, "Selecione solo un alumno para Eliminar");
+        } else {
+            Alumno a = new Alumno();
+            int fila = tblDetalles.getSelectedRow();
+            a.setCodAlumno((String.valueOf(tblDetalles.getValueAt(fila, 0))));
+            a.setNombres((String.valueOf(tblDetalles.getValueAt(fila, 1))));
+            a.setApaterno((String.valueOf(tblDetalles.getValueAt(fila, 2))));
+            a.setAmaterno((String.valueOf(tblDetalles.getValueAt(fila, 3))));
+            a.setEstado((String.valueOf(tblDetalles.getValueAt(fila, 4))));
+            a.setFechaNac(Date.valueOf(tblDetalles.getValueAt(fila, 5).toString()));
+            int eleccion = JOptionPane.showConfirmDialog(null, "¿Desea ELIMINAR el alumno? " + a.getCodAlumno(), "ELIMINAR", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (eleccion == JOptionPane.YES_OPTION) {
+                control.Eliminar(a);
+            }
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-       if(verificar()){
-           alm=new Alumno();
-           alm.setCodAlumno(txtCodigo.getText());
-           alm.setNombres(txtNombre.getText());
-           alm.setApaterno(txtAPaterno.getText());
-           alm.setAmaterno(txtAMaterno.getText());
-           alm.setFechaNac(dchFechaNac.getDate());
-           alm.setEstado(getEstado());
-           control=new c_Alumno();
-           control.Actualizar(alm);
-           Limpiar(1);
-           Limpiar(2);
-           btnRegistrar.setEnabled(true);
-           btnOk.setEnabled(false);
-       }
+        if (verificar()) {
+            alm = new Alumno();
+            alm.setCodAlumno(txtCodigo.getText());
+            alm.setNombres(txtNombre.getText());
+            alm.setApaterno(txtAPaterno.getText());
+            alm.setAmaterno(txtAMaterno.getText());
+            alm.setFechaNac(dchFechaNac.getDate());
+            alm.setEstado(getEstado());
+            control = new c_Alumno();
+            control.Actualizar(alm);
+            Limpiar(1);
+            Limpiar(2);
+            btnRegistrar.setEnabled(true);
+            btnOk.setEnabled(false);
+        }
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-        int eleccion=JOptionPane.showConfirmDialog(null, "¿Desea regresaral inicio", "INICIO", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-             if(eleccion==JOptionPane.YES_OPTION){
-                FrmInicio i=new FrmInicio();
-                i.setVisible(true);
-                control.cerrarAlumno();
-                this.dispose();
-             }
+
+        if (util.menuI()) {
+            FrmInicio i = new FrmInicio();
+            i.setVisible(true);
+            this.dispose();
+            
+        }
     }//GEN-LAST:event_btnInicioActionPerformed
 
-    public boolean verificar(){
-    boolean v=false;
-    if(txtCodigo.getText().isEmpty()){
-        JOptionPane.showMessageDialog(null,"Ingrese DNI de alumno a registrar");
-        txtCodigo.requestFocus();
-    }else if(txtNombre.getText().isEmpty()){
-        JOptionPane.showMessageDialog(null,"Ingrese los nombres del alumno a registrar");
-        txtCodigo.requestFocus();
-    }else if(txtAPaterno.getText().isEmpty()){
-        JOptionPane.showMessageDialog(null,"Ingrese apellido paterno del alumno");
-        txtAPaterno.requestFocus();
-    }else if(txtAMaterno.getText().isEmpty()){
-        JOptionPane.showMessageDialog(null,"Ingrese apellido materno del alumno");
-    }else{
-        v=true;
+    private void txtCodigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyPressed
+        util.limitadorTxt(txtCodigo, 8);
+    }//GEN-LAST:event_txtCodigoKeyPressed
+
+    private void txtNombreKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyPressed
+        util.limitadorTxt(txtNombre, 30);
+    }//GEN-LAST:event_txtNombreKeyPressed
+
+    private void txtAPaternoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAPaternoKeyPressed
+        util.limitadorTxt(txtAPaterno, 15);
+    }//GEN-LAST:event_txtAPaternoKeyPressed
+
+    private void txtAMaternoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAMaternoKeyPressed
+        util.limitadorTxt(txtAMaterno, 15);        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAMaternoKeyPressed
+
+    public boolean verificar() {
+        boolean v = false;
+        if (txtCodigo.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese DNI de alumno a registrar");
+            txtCodigo.requestFocus();
+        } else if (txtNombre.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese los nombres del alumno a registrar");
+            txtCodigo.requestFocus();
+        } else if (txtAPaterno.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese apellido paterno del alumno");
+            txtAPaterno.requestFocus();
+        } else if (txtAMaterno.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese apellido materno del alumno");
+        } else {
+            v = true;
+        }
+
+        return v;
     }
-    
-    return v;
-}
-    
-    public String getEstado(){
-        String e="Activo";
-        if(this.rbtCulminado.isSelected()) e="Culminado";
-        if(this.rbtRetirado.isSelected())e="Retirado";
+
+    public String getEstado() {
+        String e = "Activo";
+        if (this.rbtCulminado.isSelected()) {
+            e = "Culminado";
+        }
+        if (this.rbtRetirado.isSelected()) {
+            e = "Retirado";
+        }
         return e;
     }
-    
-    public void Limpiar(int x){
-        switch(x){
+
+    public void Limpiar(int x) {
+        switch (x) {
             case 1:
                 util.LimpiarTxt(jPanel1);
                 rbtActivo.setSelected(true);
-            break;
+                break;
             case 2:
                 tblDetalles.removeAll();
                 btnModificar.setEnabled(false);
                 btnEliminar.setEnabled(false);
-            break;
-                
+                break;
+
         }
-        
+
     }
-    
+
     /**
      * @param args the command line arguments
      */

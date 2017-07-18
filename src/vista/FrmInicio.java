@@ -12,15 +12,16 @@ import java.awt.event.ActionListener;
  *
  * @author Jony
  */
-public class FrmInicio extends javax.swing.JFrame implements ActionListener{
+public class FrmInicio extends javax.swing.JFrame implements ActionListener {
 
     /**
      * Creates new form FrmInicio
      */
-   public frmAlumno frmAlm=new frmAlumno();
-   public FrmMatricula frmMatr=new FrmMatricula();
-   public frmCurso frmCur=new frmCurso();
-   public frmNotas frmN=new frmNotas();
+    frmAlumno frmAlm = new frmAlumno();
+    FrmMatricula frmMatr = new FrmMatricula();
+    frmCurso frmCur = new frmCurso();
+    frmNotas frmN = new frmNotas();
+
     public FrmInicio() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -28,7 +29,7 @@ public class FrmInicio extends javax.swing.JFrame implements ActionListener{
         btnMatricula.addActionListener(this);
         btnCursos.addActionListener(this);
         btnNotas.addActionListener(this);
-       
+
     }
 
     /**
@@ -114,15 +115,14 @@ public class FrmInicio extends javax.swing.JFrame implements ActionListener{
             }
         });
     }
-    
+
     //-----------------//
-    
-    public void llamadas(int x){
-        switch(x){
+    public void llamadas(int x) {
+        switch (x) {
             case 1:
-               frmAlm.setVisible(true);
-               this.dispose();
-               break;
+                frmAlm.setVisible(true);
+                this.dispose();
+                break;
             case 2:
                 frmMatr.setVisible(true);
                 this.dispose();
@@ -137,8 +137,7 @@ public class FrmInicio extends javax.swing.JFrame implements ActionListener{
                 break;
         }
     }
-    
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlumnos;
@@ -150,17 +149,17 @@ public class FrmInicio extends javax.swing.JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==this.btnAlumnos){
+        if (e.getSource() == this.btnAlumnos) {
             llamadas(1);
         }
-       if(e.getSource()==this.btnMatricula){
+        if (e.getSource() == this.btnMatricula) {
             llamadas(2);
         }
-       if(e.getSource()==this.btnCursos){
+        if (e.getSource() == this.btnCursos) {
             llamadas(3);
         }
-       if(e.getSource()==this.btnNotas){
+        if (e.getSource() == this.btnNotas) {
             llamadas(4);
         }
-   }
+    }
 }

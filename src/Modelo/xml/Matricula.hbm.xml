@@ -23,5 +23,6 @@
             </key>
             <one-to-many class="Modelo.Notas" />
         </set>
+        
     </class>
 </hibernate-mapping>

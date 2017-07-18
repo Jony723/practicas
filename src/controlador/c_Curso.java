@@ -15,7 +15,7 @@ import org.hibernate.SessionFactory;
  * @author Jony
  */
 public class c_Curso {
-    public SessionFactory sf=H_Util_adm.getSessionFactory();
+   SessionFactory sf=H_Util_adm.getSessionFactory();
     
     public void registrar(Cursos c){
         Session s=sf.openSession();

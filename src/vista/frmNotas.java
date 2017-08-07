@@ -5,6 +5,8 @@
  */
 package vista;
 
+import controlador.tools.Utilitarios;
+
 /**
  *
  * @author Jony
@@ -16,6 +18,7 @@ public class frmNotas extends javax.swing.JFrame {
      */
     public frmNotas() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -35,6 +38,12 @@ public class frmNotas extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GESTION COlEGIO - NOTAS");
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
@@ -85,7 +94,6 @@ public class frmNotas extends javax.swing.JFrame {
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         frmNotasReg reg= new frmNotasReg();
         reg.setVisible(true);
-        reg.setLocationRelativeTo(null);
         this.setVisible(false);
                 
     }//GEN-LAST:event_btnRegistrarActionPerformed
@@ -93,16 +101,19 @@ public class frmNotas extends javax.swing.JFrame {
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         FrmInicio inicio=new FrmInicio();
         inicio.setVisible(true);
-        inicio.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerActionPerformed
         frmVerNotas ver=new frmVerNotas();
         ver.setVisible(true);
-        ver.setLocationRelativeTo(null);
         this.setVisible(false);
     }//GEN-LAST:event_btnVerActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Utilitarios u =new Utilitarios();
+        u.Salir();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

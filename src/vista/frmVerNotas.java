@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vista;
 
 import javax.swing.DefaultComboBoxModel;
+import controlador.tools.Utilitarios;
 
 /**
  *
@@ -13,13 +9,15 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class frmVerNotas extends javax.swing.JFrame {
 
+    Utilitarios util = new Utilitarios();
+
     /**
      * Creates new form frmVerNotas
      */
     public frmVerNotas() {
         initComponents();
-        this.cboNivelgrado1.setModel(NivelyGrado());
-        this.cboNivelGrado2.setModel(NivelyGrado());
+        this.cboNivelgrado1.setModel(util.modeloNG());
+        this.cboNivelGrado2.setModel(util.modeloNG());
     }
 
     /**
@@ -58,6 +56,11 @@ public class frmVerNotas extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GESTION COLEGIO - NOTAS - Ver");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -74,6 +77,11 @@ public class frmVerNotas extends javax.swing.JFrame {
         rbtGradoAño.setSelected(true);
         rbtGradoAño.setText("Por grado y año");
         rbtGradoAño.setOpaque(false);
+        rbtGradoAño.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rbtGradoAñoStateChanged(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(204, 204, 204));
@@ -229,17 +237,27 @@ public class frmVerNotas extends javax.swing.JFrame {
         btnInicio.setText("INICIO");
         btnInicio.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnInicio.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 713, 130, 50));
 
         btnMenu.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/left1.png"))); // NOI18N
         btnMenu.setMnemonic('o');
         btnMenu.setText("Menú notas");
+        btnMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenuActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 713, 190, 50));
 
         btnImprimir.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnImprimir.setForeground(new java.awt.Color(0, 102, 153));
-        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/printer_blue.png"))); // NOI18N
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/printer_blue.png"))); // NOI18N
         btnImprimir.setMnemonic('p');
         btnImprimir.setText("Imprimir");
         btnImprimir.setEnabled(false);
@@ -251,6 +269,37 @@ public class frmVerNotas extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void rbtGradoAñoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbtGradoAñoStateChanged
+        if (rbtGradoAño.isSelected()) {
+            ychAño.setEnabled(true);
+            cboCurso.setEnabled(true);
+            cboNivelgrado1.setEnabled(true);
+            cboNivelGrado2.setEnabled(false);
+            txtCodAlumno.setEditable(false);
+        } else {
+            ychAño.setEnabled(false);
+            cboCurso.setEnabled(false);
+            cboNivelgrado1.setEnabled(false);
+            cboNivelGrado2.setEnabled(true);
+            txtCodAlumno.setEditable(false);
+        }
+    }//GEN-LAST:event_rbtGradoAñoStateChanged
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        util.Salir();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
+        if (util.menuI()) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnInicioActionPerformed
+
+    private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
+        frmNotas n= new frmNotas();
+        n.setVisible(true);
+    }//GEN-LAST:event_btnMenuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -287,9 +336,9 @@ public class frmVerNotas extends javax.swing.JFrame {
         });
     }
     ///------------------
-    
-    public DefaultComboBoxModel NivelyGrado(){
-        DefaultComboBoxModel modelo=new DefaultComboBoxModel();
+
+    public DefaultComboBoxModel NivelyGrado() {
+        DefaultComboBoxModel modelo = new DefaultComboBoxModel();
         modelo.addElement("Seleccione");
         modelo.addElement("1° Primaria");
         modelo.addElement("2° Primaria");
@@ -302,10 +351,10 @@ public class frmVerNotas extends javax.swing.JFrame {
         modelo.addElement("3° Secundaria");
         modelo.addElement("4° Secundaria");
         modelo.addElement("5° Secundaria");
-        
+
         return modelo;
     }
-    
+
     ////---------------
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

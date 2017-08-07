@@ -4,7 +4,6 @@ import Modelo.Cursos;
 import controlador.tools.H_Util_adm;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -15,104 +14,74 @@ import org.hibernate.SessionFactory;
  * @author Jony
  */
 public class c_Curso {
-   SessionFactory sf=H_Util_adm.getSessionFactory();
-    
-    public void registrar(Cursos c){
-        Session s=sf.openSession();
-        try{
+
+    public String registrar(Cursos c) {
+        SessionFactory sf = H_Util_adm.getSessionFactory();
+        Session s = sf.openSession();
+        String mensaje = null;
+        try {
             s.beginTransaction();
             s.save(c);
             s.getTransaction().commit();
-            JOptionPane.showMessageDialog(null,"Se registro curso con exito");
-        }catch(HibernateException e){
-            if(e!=null){
-              JOptionPane.showMessageDialog(null, e);
-              s.getTransaction().rollback();
+            mensaje = "Se registro curso con exito";
+        } catch (HibernateException e) {
+            if (e != null) {
+                mensaje = "NO se pudo registrar curso \n" + e;
+                s.getTransaction().rollback();
             }
-        }finally{
-           if(s!=null){
-               s.close();
-           }
-            
-        }
-    }
-    
-    public void Eliminar(Cursos c){
-        Session s=sf.openSession();
-        try{
-            s.beginTransaction();
-            s.delete(c);
-            s.getTransaction().commit();
-            JOptionPane.showMessageDialog(null,"Se Elimino curso con exito");
-        }catch(HibernateException e){
-            if(e!=null){
-              JOptionPane.showMessageDialog(null, e);
-              s.getTransaction().rollback();
+        } finally {
+            if (s != null) {
+                s.close();
             }
-        }finally{
-             if(s!=null){
-               s.close();
-           }
-            
+
         }
+        return mensaje;
     }
-    
-    public void Modificar(Cursos c){
-        Session s=sf.openSession();
-        try{
+
+   
+    public String Modificar(Cursos c) {
+        String mensaje=null;
+        SessionFactory sf = H_Util_adm.getSessionFactory();
+        Session s = sf.openSession();
+        try {
             s.beginTransaction();
             s.update(c);
             s.getTransaction().commit();
-            JOptionPane.showMessageDialog(null,"Se Modifico curso con exito");
-        }catch(HibernateException e){
-            if(e!=null){
-              JOptionPane.showMessageDialog(null, e);
-              s.getTransaction().rollback();
+            mensaje="Se Modifico curso con exito";
+        } catch (HibernateException e) {
+            if (e != null) {
+                mensaje="ERROR DE CONEXION, \n"+e;
+                s.getTransaction().rollback();
             }
-        }finally{
-             if(s!=null){
-               s.close();
-           }
-            
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+
         }
+        return mensaje;
     }
-    
-    public DefaultTableModel ListarCursos(){
-        DefaultTableModel modelo=new DefaultTableModel();
-        modelo.addColumn("Codigo");
-        modelo.addColumn("Nombre o descripción");
-        modelo.addColumn("Area");
-        modelo.addColumn("Condicion");
-        Object[] columna=new Object[4];
-        Session s=sf.openSession();
-        try{
-            Query q=s.createQuery("select codCurso,descripcion,area,condicion from Cursos");
-            List<Object[]>listCursos =q.list();
-            for(Object[] datos: listCursos){
-               columna[0]=(datos[0]);
-               columna[1]=(datos[1]);
-               columna[2]=(datos[2]);
-               columna[3]=(datos[3]);
-            modelo.addRow(columna);
-                
+
+    public List<Object[]> ListarCursos() {
+
+        SessionFactory sf = H_Util_adm.getSessionFactory();
+        Session s = sf.openSession();
+        List<Object[]> listCursos = null;
+        try {
+            Query q = s.createQuery("select codCurso,descripcion,area,condicion from Cursos");
+            listCursos = q.list();
+
+        } catch (HibernateException e) {
+            if (e != null) {
+                JOptionPane.showMessageDialog(null, "Error de conexion \n" + e,"ERROR",JOptionPane.ERROR_MESSAGE);
+                s.getTransaction().rollback();
             }
-        }catch(HibernateException e){
-            if(e!=null){
-              JOptionPane.showMessageDialog(null, e);
-              s.getTransaction().rollback();
+        } finally {
+            if (s != null) {
+                s.close();
             }
-        }finally{
-            if(s!=null){
-               s.close();
-           } 
         }
-        return modelo;
+        return listCursos;
     }
-    
-    public void CerrarCurso(){
-       if(sf!=null){
-           sf.close();
-           
-       } 
-    }
+
 }

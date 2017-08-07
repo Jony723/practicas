@@ -12,6 +12,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import vista.FrmInicio;
 
 
 
@@ -59,6 +60,8 @@ public class Utilitarios {
         int i=JOptionPane.showConfirmDialog(null,"¿Desea regresar al Menu inicio?", "Inicio",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
         if(i==JOptionPane.YES_OPTION){
             resp=true;
+            FrmInicio meI = new FrmInicio();
+            meI.setVisible(true);
         }
         return resp;
     }

@@ -4,7 +4,17 @@
  * and open the template in the editor.
  */
 package vista;
+
+import Modelo.Cursos;
+import Modelo.Matricula;
+import Modelo.Notas;
+import controlador.c_RegNotas;
+import controlador.tools.Utilitarios;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Jony
@@ -14,8 +24,20 @@ public class frmNotasReg extends javax.swing.JFrame {
     /**
      * Creates new form frmNotasReg
      */
+    Utilitarios util;
+    c_RegNotas control;
+    Matricula matri;
+
+    Cursos Cur;
+
     public frmNotasReg() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        util = new Utilitarios();
+        control = new c_RegNotas();
+        matri = new Matricula();
+        tblAlumnos.setModel(modeloT_Alumnos());
+        tblSituacion.setModel(modeloT_Situacion());
         cboN1.setModel(modeloNotas());
         cboN2.setModel(modeloNotas());
         cboN3.setModel(modeloNotas());
@@ -40,8 +62,6 @@ public class frmNotasReg extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cboNivelA = new javax.swing.JComboBox<>();
         BtnVerAlumnos = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        cboCurso = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAlumnos = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
@@ -68,6 +88,8 @@ public class frmNotasReg extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         lblCantNotas = new javax.swing.JLabel();
         btnNuevo = new javax.swing.JButton();
+        cboCurso = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
         btnInicio = new javax.swing.JButton();
         btnAtras = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
@@ -77,6 +99,11 @@ public class frmNotasReg extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GESTIÓN COLEGIO - NOTAS - Registrar");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -97,17 +124,21 @@ public class frmNotasReg extends javax.swing.JFrame {
         jLabel3.setText("Nivel y Año");
 
         cboNivelA.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione", "1° Primaria", "2° Primaria", "3° Primaria", "4° Primaria", "5° Primaria", "6° Primaria", "1° Secundaria", "2° Secundaria", "3° Secundaria", "4° Secundaria", "5° Secundaria" }));
+        cboNivelA.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboNivelAItemStateChanged(evt);
+            }
+        });
 
         BtnVerAlumnos.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         BtnVerAlumnos.setForeground(new java.awt.Color(0, 102, 153));
         BtnVerAlumnos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/user_group.png"))); // NOI18N
         BtnVerAlumnos.setText("Ver Alumnos");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel4.setText("Cursos");
-
-        cboCurso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        BtnVerAlumnos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnVerAlumnosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -125,13 +156,9 @@ public class frmNotasReg extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cboNivelA, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cboCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(cboNivelA, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
+                        .addGap(43, 43, 43)
                         .addComponent(BtnVerAlumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
@@ -146,28 +173,29 @@ public class frmNotasReg extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(cboNivelA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(cboCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addGap(47, 47, 47)
                 .addComponent(BtnVerAlumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 250, 250));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 250, 230));
 
         tblAlumnos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Codigo", "Apellido P", "Apellido M", "Nombres"
+
             }
         ));
+        tblAlumnos.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tblAlumnosFocusLost(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblAlumnos);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, 630, 230));
@@ -216,17 +244,9 @@ public class frmNotasReg extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Codigo", "N1", "N2", "N3", "N4", "N5", "N6", "Situación"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
             }
-        });
+        ));
         jScrollPane2.setViewportView(tblSituacion);
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -240,6 +260,12 @@ public class frmNotasReg extends javax.swing.JFrame {
         btnRegistrar.setForeground(new java.awt.Color(0, 102, 153));
         btnRegistrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save (2).png"))); // NOI18N
         btnRegistrar.setText("Registrar");
+        btnRegistrar.setEnabled(false);
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jPanel3.setOpaque(false);
@@ -250,6 +276,11 @@ public class frmNotasReg extends javax.swing.JFrame {
         btnModificar.setMnemonic('M');
         btnModificar.setText("Modificar");
         btnModificar.setEnabled(false);
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnOk.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnOk.setForeground(new java.awt.Color(0, 102, 153));
@@ -289,6 +320,23 @@ public class frmNotasReg extends javax.swing.JFrame {
         btnNuevo.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         btnNuevo.setForeground(new java.awt.Color(0, 102, 153));
         btnNuevo.setText("Nuevo");
+        btnNuevo.setEnabled(false);
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+
+        cboCurso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione" }));
+        cboCurso.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboCursoItemStateChanged(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel4.setText("Cursos");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -297,53 +345,52 @@ public class frmNotasReg extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
+                        .addGap(45, 45, 45)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel5))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addGap(18, 18, 18))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(201, 201, 201)))
+                        .addComponent(lblCantNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboN1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cboN4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel9)
+                                .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cboN5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(cboCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cboN2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cboN6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cboN3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(57, 57, 57))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboN1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cboN4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel13)
-                                        .addGap(18, 18, 18))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(201, 201, 201)))
-                                .addComponent(lblCantNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(47, 47, 47))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))))
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboN5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cboN2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(12, 12, 12)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboN6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cboN3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -351,27 +398,37 @@ public class frmNotasReg extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(lblCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(20, 20, 20)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(cboCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel11)
                     .addComponent(lblCurso))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(cboN2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(cboN5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
+                .addContainerGap(71, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
                     .addComponent(cboN1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboN2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboN3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -379,24 +436,22 @@ public class frmNotasReg extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(jLabel10)
                     .addComponent(cboN4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboN5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboN6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
+                        .addGap(31, 31, 31)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
                             .addComponent(lblCantNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(49, 49, 49))
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 940, 340));
@@ -405,12 +460,22 @@ public class frmNotasReg extends javax.swing.JFrame {
         btnInicio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/exit.png"))); // NOI18N
         btnInicio.setText("INICIO");
         btnInicio.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 740, -1, 50));
 
         btnAtras.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnAtras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/left1.png"))); // NOI18N
         btnAtras.setMnemonic('o');
         btnAtras.setText("Menú Notas");
+        btnAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtrasActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 740, -1, 50));
 
         jLabel12.setForeground(new java.awt.Color(204, 204, 204));
@@ -429,6 +494,135 @@ public class frmNotasReg extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        util.Salir();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
+        frmNotas n = new frmNotas();
+        int x = JOptionPane.showConfirmDialog(null, "¿Deséa ir al menú notas?", "Menú", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (x == JOptionPane.YES_OPTION) {
+            n.setVisible(true);
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnAtrasActionPerformed
+
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
+        if (util.menuI()) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnInicioActionPerformed
+
+    private void BtnVerAlumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnVerAlumnosActionPerformed
+        if (cboNivelA.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(null, "Seleccione un grado de la lista");
+        } else {
+            DefaultTableModel modelo = modeloT_Alumnos();
+            Object[] columna = new Object[3];
+            List<Object[]> listAlumnos = control.listarAlumnos(getNivel(), String.valueOf(ychAño.getYear()));
+            if (!listAlumnos.isEmpty()) {
+                int nOrden = 1;
+                for (Object[] datos : listAlumnos) {
+                    columna[0] = nOrden;
+                    columna[1] = (datos[1]);
+                    columna[2] = (datos[2]);
+                    modelo.addRow(columna);
+                    nOrden++;
+                }
+                tblAlumnos.setModel(modelo);
+                lblCantAlumnos.setText(String.valueOf(modelo.getRowCount()));
+            } else {
+                JOptionPane.showMessageDialog(null, "no hay alumnos matriculados en ese año o nivel");
+            }
+        }
+    }//GEN-LAST:event_BtnVerAlumnosActionPerformed
+
+    private void cboNivelAItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboNivelAItemStateChanged
+        String nivel = getNivel();
+
+        cboCurso.setModel(modeloCombo(nivel));
+
+    }//GEN-LAST:event_cboNivelAItemStateChanged
+
+    private void cboCursoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboCursoItemStateChanged
+        if (cboCurso.getSelectedIndex() > 0) {
+            lblCurso.setText(cboCurso.getSelectedItem().toString());
+            btnRegistrar.setEnabled(true);
+        }
+
+    }//GEN-LAST:event_cboCursoItemStateChanged
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+
+        if (matri.getCodMatricula() == 0) {
+            JOptionPane.showMessageDialog(null, "Seleccione un alumno");
+
+        } else {
+            boolean r = false;
+            int contReg = 0;
+            Notas n = getDatos(matri);
+            if (r = true) {//// el controlador va devolver true si registra las notas
+                cboN1.setSelectedIndex(0);
+                cboN2.setSelectedIndex(0);
+                cboN3.setSelectedIndex(0);
+                cboN4.setSelectedIndex(0);
+                cboN5.setSelectedIndex(0);
+                cboN6.setSelectedIndex(0);
+                llenarTSituacion();
+                contReg++;
+            } else {
+                JOptionPane.showMessageDialog(null, "NO se pudo registrar las notas para el alumno", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            if (lblCantAlumnos.getText().equals(contReg)) {// si la cantidad de alumnos es igual a la de registros 
+                btnRegistrar.setEnabled(false);//se desabilita el boton registrar
+                btnNuevo.setEnabled(true);//se habilita el boton nuevo
+                btnModificar.setEnabled(true);//se habilita el boton modificar
+
+            }
+            lblCantNotas.setText(String.valueOf(contReg));
+        }
+
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void tblAlumnosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblAlumnosFocusLost
+        if (tblAlumnos.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(null, "Seleccione solo un alumno");
+        } else {
+            int nFila = tblAlumnos.getSelectedRow();
+            matri.setCodMatricula((int) tblAlumnos.getValueAt(nFila, 0));
+        }
+    }//GEN-LAST:event_tblAlumnosFocusLost
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        lblCantNotas.setText(null);
+        btnRegistrar.setEnabled(true);
+        tblSituacion.setModel(modeloT_Situacion());
+        cboCurso.setSelectedIndex(0);
+        matri.setCodMatricula(0);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        
+        if(tblSituacion.getSelectedRowCount()>1){
+         JOptionPane.showMessageDialog(null, "seleccione solo un alumno de la tabla");
+        }else{
+        int fila=tblSituacion.getSelectedRow();
+         Notas n = new Notas();
+         n.setIdNotas((int)(tblSituacion.getValueAt(fila, 0)));
+         matri.setCodMatricula((int)(tblSituacion.getValueAt(fila, 1)));
+         n.setMatricula(matri);
+         //n.setCursos(Cur);
+         n.setN1((int)(tblSituacion.getValueAt(fila, 2)));
+         n.setN2((int)(tblSituacion.getValueAt(fila, 3)));
+         n.setN3((int)(tblSituacion.getValueAt(fila, 4)));
+         n.setN4((int)(tblSituacion.getValueAt(fila, 5)));
+         n.setN5((int)(tblSituacion.getValueAt(fila, 6)));
+         n.setN6((int)(tblSituacion.getValueAt(fila, 7)));
+         n.setPromedio((double)(tblSituacion.getValueAt(fila, 8)));
+         n.setSituacion(String.valueOf(tblSituacion.getValueAt(fila, 8)));
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -464,33 +658,130 @@ public class frmNotasReg extends javax.swing.JFrame {
             }
         });
     }
-////****---------------------
-    public DefaultComboBoxModel modeloNotas(){
-      DefaultComboBoxModel modelo= new DefaultComboBoxModel();
-      modelo.addElement("00");
-      modelo.addElement("01");
-      modelo.addElement("02");
-      modelo.addElement("03");
-      modelo.addElement("04");
-      modelo.addElement("05");
-      modelo.addElement("06");
-      modelo.addElement("07");
-      modelo.addElement("08");
-      modelo.addElement("09");
-      modelo.addElement("10");
-      modelo.addElement("11");
-      modelo.addElement("12");
-      modelo.addElement("13");
-      modelo.addElement("14");
-      modelo.addElement("15");
-      modelo.addElement("16");
-      modelo.addElement("17");
-      modelo.addElement("18");
-      modelo.addElement("19");
-      modelo.addElement("20");
-      return modelo;
+////****---------------metodos auxiliares------////////
+
+    private DefaultComboBoxModel modeloNotas() {
+        DefaultComboBoxModel modelo = new DefaultComboBoxModel();
+        modelo.addElement("00");
+        modelo.addElement("01");
+        modelo.addElement("02");
+        modelo.addElement("03");
+        modelo.addElement("04");
+        modelo.addElement("05");
+        modelo.addElement("06");
+        modelo.addElement("07");
+        modelo.addElement("08");
+        modelo.addElement("09");
+        modelo.addElement("10");
+        modelo.addElement("11");
+        modelo.addElement("12");
+        modelo.addElement("13");
+        modelo.addElement("14");
+        modelo.addElement("15");
+        modelo.addElement("16");
+        modelo.addElement("17");
+        modelo.addElement("18");
+        modelo.addElement("19");
+        modelo.addElement("20");
+        return modelo;
     }
-    
+
+    private DefaultTableModel modeloT_Alumnos() {
+        DefaultTableModel modeloT = new DefaultTableModel();
+        modeloT.addColumn("N°");
+        modeloT.addColumn("Alumno");
+        modeloT.addColumn("Cod_Matricula");
+        return modeloT;
+    }
+
+    private DefaultTableModel modeloT_Situacion() {
+        DefaultTableModel modeloT = new DefaultTableModel();
+        modeloT.addColumn("cod_reg");
+        modeloT.addColumn("Codigo alumno");
+        modeloT.addColumn("N1");
+        modeloT.addColumn("N2");
+        modeloT.addColumn("N3");
+        modeloT.addColumn("N4");
+        modeloT.addColumn("N5");
+        modeloT.addColumn("N6");
+        modeloT.addColumn("Situación");
+        return modeloT;
+    }
+
+    private String getNivel() {
+        String nivel = null;
+        if (cboNivelA.getSelectedIndex() < 7) {
+            nivel = "10" + cboNivelA.getSelectedIndex();
+        } else {
+            nivel = "20" + cboNivelA.getSelectedIndex();
+        }
+        return nivel;
+    }
+
+    private DefaultComboBoxModel modeloCombo(String codNivel) {
+        DefaultComboBoxModel modelo = new DefaultComboBoxModel();
+        List<Object[]> lcombo = control.listarCursos(codNivel);
+        if (lcombo.isEmpty()) {
+            modelo.addElement("NO hay Cursos");
+        } else {
+            modelo.addElement("Seleccione");
+            for (Object[] datos : lcombo) {
+                modelo.addElement(datos[1]);
+            }
+        }
+
+        return modelo;
+    }
+
+    private Notas getDatos(Matricula m) {
+        Notas n = new Notas();
+        int[] notas = new int[6];
+        int acuNotas = 0;
+        double prom = 0;
+        n.setMatricula(m);
+        //n.setCursos(cursos);
+        notas[0] = cboN1.getSelectedIndex();
+        notas[1] = cboN2.getSelectedIndex();
+        notas[2] = cboN3.getSelectedIndex();
+        notas[3] = cboN4.getSelectedIndex();
+        notas[4] = cboN5.getSelectedIndex();
+        notas[5] = cboN6.getSelectedIndex();
+        //
+        n.setN1(notas[0]);
+        n.setN2(notas[1]);
+        n.setN3(notas[2]);
+        n.setN4(notas[3]);
+        n.setN5(notas[4]);
+        n.setN6(notas[5]);
+        for (int i = 0; i < 6; i++) {
+            acuNotas = +notas[i];
+        }
+        prom = Math.round(acuNotas / 6);
+        n.setPromedio(prom);
+        n.setSituacion((prom > 11) ? "Aprobado" : "Desaprobado");
+
+        return n;
+    }
+
+    private void llenarTSituacion() {
+        DefaultTableModel mts = modeloT_Situacion();
+        Object[] columna = new Object[9];
+        List<Object[]> listSituacion = control.verNotas((String.valueOf(ychAño.getYear())),lblCurso.getText(),getNivel());
+
+        for (Object[] datos : listSituacion) {
+            columna[0] = (datos[1]);
+            columna[1] = (datos[2]);
+            columna[2] = (datos[3]);
+            columna[3] = (datos[4]);
+            columna[4] = (datos[5]);
+            columna[5] = (datos[6]);
+            columna[6] = (datos[7]);
+            columna[7] = (datos[8]);
+            columna[8] = (datos[9]);
+            mts.addColumn(columna);
+        }
+        tblSituacion.setModel(mts);
+    }
     //*******--------------------
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnVerAlumnos;

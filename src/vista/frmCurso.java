@@ -8,8 +8,9 @@ package vista;
 import Modelo.Cursos;
 import controlador.c_Curso;
 import controlador.tools.Utilitarios;
-import java.awt.Cursor;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -20,11 +21,15 @@ public class frmCurso extends javax.swing.JFrame {
     /**
      * Creates new form frmCurso
      */
-    public Utilitarios u=new Utilitarios();
-    public c_Curso control=new c_Curso();
+    Utilitarios u;
+    c_Curso control;
+
     public frmCurso() {
         initComponents();
         this.setLocationRelativeTo(null);
+        control = new c_Curso();
+        u = new Utilitarios();
+        tblCursos.setModel(modeloT());
     }
 
     /**
@@ -198,17 +203,9 @@ public class frmCurso extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Codigo", "Nombre o Descripción", "Area", "Condicion"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
             }
-        });
+        ));
         jScrollPanel.setViewportView(tblCursos);
 
         getContentPane().add(jScrollPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 470, 310));
@@ -231,12 +228,22 @@ public class frmCurso extends javax.swing.JFrame {
         btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/arrow_circle_double.png"))); // NOI18N
         btnActualizar.setText("Actualizar");
         btnActualizar.setEnabled(false);
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
 
         btnOk.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnOk.setForeground(new java.awt.Color(0, 102, 153));
         btnOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ok.png"))); // NOI18N
         btnOk.setText("OK");
         btnOk.setEnabled(false);
+        btnOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOkActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -286,13 +293,11 @@ public class frmCurso extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-         int eleccion=JOptionPane.showConfirmDialog(null, "¿Desea regresaral inicio", "INICIO", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-             if(eleccion==JOptionPane.YES_OPTION){
-                FrmInicio i=new FrmInicio();
-                i.setVisible(true);
-                control.CerrarCurso();
-                this.dispose();
-             }
+        if (u.menuI()) {
+            this.dispose();
+        }
+
+
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -300,44 +305,94 @@ public class frmCurso extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-       if(validar()){
-        Cursos curso=new Cursos();
-        curso.setDescripcion(txtNombre.getText());
-        curso.setCondicion(Condicion());
-        curso.setArea(cboArea.getSelectedItem().toString());
-        control.registrar(curso);
-       }
-        
+        if (validar()) {
+            Cursos curso = new Cursos();
+            curso.setDescripcion(txtNombre.getText());
+            curso.setCondicion(Condicion());
+            curso.setArea(cboArea.getSelectedItem().toString());
+            String mensaje = control.registrar(curso);
+            JOptionPane.showMessageDialog(null, mensaje, "AVISO", JOptionPane.INFORMATION_MESSAGE);
+        }
+
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerActionPerformed
-       tblCursos.setModel(control.ListarCursos());
-       int x=tblCursos.getRowCount();
-       if(x!=0)btnActualizar.setEnabled(true);
+        DefaultTableModel modelo = modeloT();
+        Object[] columna = new Object[4];
+        List<Object[]> listCursos = control.ListarCursos();
+
+        for (Object[] datos : listCursos) {
+            columna[0] = (datos[0]);
+            columna[1] = (datos[1]);
+            columna[2] = (datos[2]);
+            columna[3] = (datos[3]);
+            modelo.addRow(columna);
+
+        }
+        if (listCursos != null) {
+            tblCursos.setModel(modelo);
+            btnActualizar.setEnabled(true);
+        }
+
     }//GEN-LAST:event_btnVerActionPerformed
 
-    private String Condicion(){
-        String condi="Activo";
-        if(rbtSuspendido.isSelected()){
-            condi="Suspendido";
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        if (tblCursos.getSelectedRowCount() == 1) {
+            int fila = tblCursos.getSelectedRow();
+            lblCodigo.setText(String.valueOf(tblCursos.getValueAt(fila, 0)));
+            btnRegistrar.setEnabled(false);
+            btnVer.setEnabled(false);
+            btnVer.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un curso de la lista para actulizar datos", "AVISO", JOptionPane.WARNING_MESSAGE);
+        }
+
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+        if (validar()) {
+            String mensaje = null;
+            Cursos curso = new Cursos();
+            curso.setCodCurso(Integer.parseInt(lblCodigo.getText()));
+            curso.setDescripcion(txtNombre.getText());
+            curso.setCondicion(Condicion());
+            curso.setArea(cboArea.getSelectedItem().toString());
+            JOptionPane.showMessageDialog(null, mensaje, "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnOkActionPerformed
+
+    ///metodos axiliares
+    private String Condicion() {
+        String condi = "Activo";
+        if (rbtSuspendido.isSelected()) {
+            condi = "Suspendido";
         }
         return condi;
     }
-    
-    private boolean validar(){
-        boolean v= true;
-        if(txtNombre.getText().isEmpty()){
-            JOptionPane.showMessageDialog(null,"El curso a registrar debe tener un nombre");
+
+    private boolean validar() {
+        boolean v = true;
+        if (txtNombre.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El curso a registrar debe tener un nombre");
             txtNombre.requestFocus();
-            v=false;
-        }else if(cboArea.getSelectedIndex()==0){
-            JOptionPane.showMessageDialog(null,"Selecione una area de la lista");
+            v = false;
+        } else if (cboArea.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(null, "Selecione una area de la lista");
             cboArea.requestFocus();
-            v=false;
+            v = false;
         }
         return v;
     }
-    
+
+    private DefaultTableModel modeloT() {
+        DefaultTableModel m = new DefaultTableModel();
+        m.addColumn("Codigo");
+        m.addColumn("Nombre o Descripción");
+        m.addColumn("Área");
+        m.addColumn("Condición");
+        return m;
+    }
+
     /**
      * @param args the command line arguments
      */
